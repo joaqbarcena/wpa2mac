@@ -1,0 +1,10 @@
+#!/bin/bash
+
+type=$1
+start=$type$2
+end=$type$3
+bssid=$4
+template=$type@@@@@@@
+
+crunch 10 10 0123456789 -t $template -s $start -e $end | aircrack-ng -b $bssid capture.cap -w -
+

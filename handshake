@@ -1,0 +1,17 @@
+#!/bin/bash
+
+#Para que ande fue necesario intalaer wireshark, brew install wireshark
+#Tambien hice
+#sudo ln -s /System/Library/PrivateFrameworks/Apple80211.framework/Versions/Current/Resources/airport /usr/local/sbin/airport
+BSSID=$2
+# disassociate
+sudo airport -z
+# set the channel
+sudo airport -c$1
+# capture a beacon frame from the AP
+sudo tcpdump "type mgt subtype beacon and ether src $BSSID" -I -c 1 -i en0 -w beacon.cap
+# wait for the WPA handshake
+sudo tcpdump "ether proto 0x888e and ether host $BSSID" -I -U -vvv -i en0 -w handshake.cap
+# merge the two files
+mergecap -a -F pcap -w capture.cap beacon.cap handshake.cap
+
